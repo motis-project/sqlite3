@@ -14,7 +14,14 @@ unset(_ver_line)
 
 add_library(sqlite3 STATIC sqlite3.c)
 add_library(SQLite::SQLite3 ALIAS sqlite3)
-target_include_directories(sqlite3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sqlite3 SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(UNIX)
+    find_library(M_LIB m)
+    if(M_LIB)
+        target_link_libraries(sqlite3 PRIVATE -lm)
+    endif()
+endif()
 
 add_executable(sqlite3-cli shell.c)
 set_target_properties(sqlite3-cli PROPERTIES OUTPUT_NAME sqlite3)
